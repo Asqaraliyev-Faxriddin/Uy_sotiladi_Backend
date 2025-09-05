@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+ enum UserType {
+  BUY   
+  SELL
+  ADMIN 
+}
+
+
+
+model Users {
+  id         String     @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String     @unique
+  role       String @default("BUY")
+  password   String
+  profileImg String?
+
+  houses    Housess[]
+  favorites Favorite[]
+  ratings   Rating[]
+  contacts  Contact[]
+  @@map("users")
+}
+
+
+
+
+model Housess {
+  id            String     @id @default(uuid())
+  img           String?
+  title         String
+  address       String
+  country       String?
+  price         Float
+  discount      Float?
+  build_year    DateTime?
+  description   String?
+  features      Json?
+  extraFeatures Json?
+  isActive      Boolean    @default(true)
+  documents     Json?
+
+  userId     String
+  categoryId BigInt
+
+  user      Users      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  location  Location?
+  favorites Favorite[]
+  ratings   Rating[]
+  contacts  Contact[]
+
+  @@map("houses")
+}
+
+model Location {
+  id        Int     @id @default(autoincrement())
+  map_url   String?
+  latitude  String?
+  longitude String?
+  houseId   String  @unique
+
+  house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("locations")
+}
+
+
+model Favorite {
+  id      BigInt  @id @default(autoincrement())
+  like    Boolean
+  userId  String
+  houseId String
+
+  user  Users   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("favorites")
+}
+
+model Category {
+  id    BigInt   @id @default(autoincrement())
+  name  String
+  img   String?
+  icon  String?
+
+  houses Housess[]
+
+  @@map("categories")
+}
+
+model Contact {
+  id      BigInt   @id @default(autoincrement())
+  date    DateTime
+  time    String
+  name    String
+  phone   String
+  message String?
+  email   String?
+  userId  String
+  houseId String
+
+  user  Users   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("contacts")
+}
+
+model Rating {
+  id         BigInt   @id @default(autoincrement())
+  houseId    String
+  userId     String
+  cleanLines Float?
+  location   Float?
+  accuracy   Float?
+
+  user  Users   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("ratings")
+}

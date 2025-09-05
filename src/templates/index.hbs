@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{subject}}</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f3f4f6;
+        margin: 0;
+        padding: 30px;
+      }
+      .card {
+        max-width: 480px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 30px 25px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+      h2 {
+        margin-bottom: 10px;
+        color: #0d263b;
+      }
+      p {
+        color: #555;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .code {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2563eb;
+        background: #f0f4ff;
+        padding: 12px 25px;
+        border-radius: 8px;
+        display: inline-block;
+        letter-spacing: 6px;
+        margin: 20px 0;
+        box-shadow: inset 0 0 6px rgba(37, 99, 235, 0.3);
+      }
+      .expire {
+        font-size: 13px;
+        color: #e11d48;
+        margin-top: 15px;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>{{subject}}</h2>
+
+      <div class="code">{{code}}</div>
+
+      <p class="expire">⚠️ Ushbu kod faqat 5 minut davomida amal qiladi.</p>
+      <p>Agar siz bu amaliyotni boshlamagan bo‘lsangiz, ushbu xabarni e’tiborsiz qoldiring.</p>
+
+      <div class="footer">
+        &copy; {{year}} Sizning Loyihangiz. Barcha huquqlar himoyalangan.
+      </div>
+    </div>
+  </body>
+</html>
