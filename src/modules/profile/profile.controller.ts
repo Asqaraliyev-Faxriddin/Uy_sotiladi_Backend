@@ -8,7 +8,7 @@ import {
   import { v4 as uuidv4 } from 'uuid';
   import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
   import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-  import { PhoneUpdateDto, UpdateProfileDto } from './dto/profile.dto';
+  import { PhoneUpdateDto, UpdatePasswordDto, UpdateProfileDto } from './dto/profile.dto';
   import { ProfileService } from './profile.service';
   
   @ApiTags('Profile')
@@ -67,5 +67,13 @@ import {
       let user = req["user"];
       return this.profileService.updatePhone(user.id, body);
     }
+
+    @Put("password/update")
+  @ApiOperation({ summary: "Parolni yangilash" })
+  @ApiBody({ type: UpdatePasswordDto })
+  async updatePassword(@Req() req: Request,@Body() payload: UpdatePasswordDto) {
+    let user = req["user"];
+    return this.profileService.updatePassword(user.id, payload);
+  } 
   }
   

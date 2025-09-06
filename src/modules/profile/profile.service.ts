@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
-import { PhoneUpdateDto, UpdateProfileDto } from './dto/profile.dto';
+import { PhoneUpdateDto, UpdatePasswordDto, UpdateProfileDto } from './dto/profile.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as bcrypt from "bcrypt"
 import { EverificationTypes } from 'src/common/types/verification';
 import { VerificationService } from '../verification/verification.service';
 
@@ -66,6 +67,35 @@ export class ProfileService {
       status: true,
       message: "Telefon raqami yangilandi",
       data: updated,
+    };
+  }
+
+  async updatePassword(userId: string, payload: UpdatePasswordDto) {
+    const { oldPassword, newPassword } = payload;
+  
+    const user = await this.prisma.users.findFirst({
+      where: { id: userId },
+    });
+  
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+  
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException("Password incorrect");
+    }
+  
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+    const updatedUser = await this.prisma.users.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+  
+    return {
+      message: "Succase password updated",
+      user: updatedUser,
     };
   }
 }
