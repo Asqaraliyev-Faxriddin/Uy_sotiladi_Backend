@@ -1,6 +1,7 @@
 import { 
     Controller, Put, UseGuards, UseInterceptors, UploadedFile, Body, Req, 
-    Post
+    Post,
+    Get
   } from '@nestjs/common';
   import { FileInterceptor } from '@nestjs/platform-express';
   import { diskStorage } from 'multer';
@@ -75,5 +76,14 @@ import {
     let user = req["user"];
     return this.profileService.updatePassword(user.id, payload);
   } 
+
+
+  
+  @Get("profile")
+  @ApiOperation({ summary: "Foydalanuvchi profilini olish (self)" })
+  async getProfile(@Req() req: Request) {
+    let user = req["user"];
+    return this.profileService.myProfile(user.id);
+  }
   }
   

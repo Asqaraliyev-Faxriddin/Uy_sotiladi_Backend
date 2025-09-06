@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as bcrypt from "bcrypt"
 import { EverificationTypes } from 'src/common/types/verification';
 import { VerificationService } from '../verification/verification.service';
+import { UserType } from '@prisma/client';
 
 @Injectable()
 export class ProfileService {
@@ -14,16 +15,16 @@ export class ProfileService {
   async updateProfile(
     userId: string,
     dto: UpdateProfileDto,
-    fileName?: string, 
+    fileName?: string,
   ) {
     const user = await this.prisma.users.findUnique({
       where: { id: userId },
     });
-
+  
     if (!user) {
       throw new NotFoundException('Foydalanuvchi topilmadi');
     }
-
+  
     if (fileName && user.profileImg) {
       const oldFilePath = path.join(
         process.cwd(),
@@ -31,28 +32,27 @@ export class ProfileService {
         'profiles',
         user.profileImg,
       );
-
+  
       if (fs.existsSync(oldFilePath)) {
         fs.unlinkSync(oldFilePath);
       }
     }
-
+  
     const updatedUser = await this.prisma.users.update({
       where: { id: userId },
       data: {
-        ...dto,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        ...(dto.role && { role: dto.role as UserType }),
         ...(fileName && { profileImg: fileName }),
       },
     });
-
+  
     return {
       ...updatedUser,
-      profileImg: updatedUser.profileImg
-        ? `${updatedUser.profileImg}`
-        : null,
+      profileImg: updatedUser.profileImg ? `${updatedUser.profileImg}` : null,
     };
   }
-
 
   async updatePhone(userId: string, payload: PhoneUpdateDto) {
       
@@ -98,4 +98,22 @@ export class ProfileService {
       user: updatedUser,
     };
   }
+
+
+  async myProfile(id:string){
+    console.log("salom");
+    
+    let data = await this.prisma.users.findFirst({where:{id}})
+
+    if(!data) throw new NotFoundException("User not found")
+
+      
+      return {
+        succase:true,
+        message:"Succase my profile",
+        data
+      }
+
+    }
+
 }

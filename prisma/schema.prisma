@@ -7,32 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
- enum UserType {
-  BUY   
+enum UserType {
+  BUY
   SELL
-  ADMIN 
+  ADMIN
 }
 
-
+enum PaidVia {
+  PAYME
+  CLICK
+  CASH
+}
 
 model Users {
   id         String     @id @default(uuid())
   firstName  String
   lastName   String
   email      String     @unique
-  role       String @default("BUY")
+  role       UserType   @default(BUY)
   password   String
   profileImg String?
 
-  houses    Housess[]
-  favorites Favorite[]
-  ratings   Rating[]
-  contacts  Contact[]
+  houses           Housess[]
+  favorites        Favorite[]
+  purchasedCourse  PurchasedCourse[]
+  ratings          Rating[]
+  contacts         Contact[]
+
   @@map("users")
 }
-
-
-
 
 model Housess {
   id            String     @id @default(uuid())
@@ -58,6 +61,7 @@ model Housess {
   favorites Favorite[]
   ratings   Rating[]
   contacts  Contact[]
+  purchases PurchasedCourse[]
 
   @@map("houses")
 }
@@ -74,6 +78,20 @@ model Location {
   @@map("locations")
 }
 
+model PurchasedCourse {
+  id          String   @id @default(uuid())
+  houseId     String
+  userId      String
+  amount      Decimal?
+  paidVia     PaidVia
+  purchasedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  user  Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("purchasedcourses")
+}
 
 model Favorite {
   id      BigInt  @id @default(autoincrement())
