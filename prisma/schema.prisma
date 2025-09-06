@@ -8,8 +8,8 @@ datasource db {
 }
 
 enum UserType {
-  BUY
-  SELL
+  BUY   // Sotib oluvchi
+  SELL  // Sotuvchi
   ADMIN
 }
 
@@ -20,25 +20,25 @@ enum PaidVia {
 }
 
 model Users {
-  id         String     @id @default(uuid())
+  id         String        @id @default(uuid())
   firstName  String
   lastName   String
-  email      String     @unique
-  role       UserType   @default(BUY)
+  email      String        @unique
+  role       UserType      @default(BUY)
   password   String
   profileImg String?
 
-  houses           Housess[]
-  favorites        Favorite[]
-  purchasedCourse  PurchasedCourse[]
-  ratings          Rating[]
-  contacts         Contact[]
+  houses     Housess[]
+  favorites  Favorite[]
+  payments   HousePayment[]
+  ratings    Rating[]
+  contacts   Contact[]
 
   @@map("users")
 }
 
 model Housess {
-  id            String     @id @default(uuid())
+  id            String         @id @default(uuid())
   img           String?
   title         String
   address       String
@@ -49,19 +49,19 @@ model Housess {
   description   String?
   features      Json?
   extraFeatures Json?
-  isActive      Boolean    @default(true)
+  isActive      Boolean        @default(true)
   documents     Json?
 
   userId     String
   categoryId BigInt
 
-  user      Users      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  location  Location?
-  favorites Favorite[]
-  ratings   Rating[]
-  contacts  Contact[]
-  purchases PurchasedCourse[]
+  user       Users        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category   Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  location   Location?
+  favorites  Favorite[]
+  ratings    Rating[]
+  contacts   Contact[]
+  payments   HousePayment[]
 
   @@map("houses")
 }
@@ -78,19 +78,20 @@ model Location {
   @@map("locations")
 }
 
-model PurchasedCourse {
+model HousePayment {
   id          String   @id @default(uuid())
   houseId     String
   userId      String
-  amount      Decimal?
+  amount      Decimal
   paidVia     PaidVia
-  purchasedAt DateTime @default(now())
+  status      String   @default("PENDING") // PENDING, PAID, FAILED
+  paidAt      DateTime?
   createdAt   DateTime @default(now())
 
   house Housess @relation(fields: [houseId], references: [id], onDelete: Cascade)
   user  Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("purchasedcourses")
+  @@map("house_payments")
 }
 
 model Favorite {

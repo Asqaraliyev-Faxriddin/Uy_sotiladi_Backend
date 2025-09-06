@@ -12,6 +12,23 @@ import { UserType } from '@prisma/client';
 export class ProfileService {
   constructor(private prisma: PrismaService,private verificationService:VerificationService) {}
 
+
+  async myProfile(id:string){
+    console.log("salom");
+    
+    let data = await this.prisma.users.findFirst({where:{id}})
+
+    if(!data) throw new NotFoundException("User not found")
+
+      
+      return {
+        succase:true,
+        message:"Succase my profile",
+        data
+      }
+
+    }
+
   async updateProfile(
     userId: string,
     dto: UpdateProfileDto,
@@ -100,20 +117,6 @@ export class ProfileService {
   }
 
 
-  async myProfile(id:string){
-    console.log("salom");
-    
-    let data = await this.prisma.users.findFirst({where:{id}})
 
-    if(!data) throw new NotFoundException("User not found")
-
-      
-      return {
-        succase:true,
-        message:"Succase my profile",
-        data
-      }
-
-    }
 
 }
