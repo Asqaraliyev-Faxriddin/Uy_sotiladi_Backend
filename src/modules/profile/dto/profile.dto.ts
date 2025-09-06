@@ -1,5 +1,5 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateProfileDto {
   @ApiPropertyOptional({
@@ -31,3 +31,17 @@ export class UpdateProfileDto {
 
 
 }
+
+
+export class PhoneUpdateDto {
+  
+    @ApiProperty({ example: "123456", description: "SMS orqali yuborilgan OTP kodi" })
+    @IsNotEmpty()
+    @IsString()
+    otp: string;
+  
+    @ApiProperty({ example: "@example.com", description: "Yangi telefon raqami" })
+    @IsNotEmpty()
+    email: string;
+  }
+

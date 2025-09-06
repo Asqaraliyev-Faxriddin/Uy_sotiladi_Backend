@@ -1,13 +1,14 @@
 import { 
-    Controller, Put, UseGuards, UseInterceptors, UploadedFile, Body, Req 
+    Controller, Put, UseGuards, UseInterceptors, UploadedFile, Body, Req, 
+    Post
   } from '@nestjs/common';
   import { FileInterceptor } from '@nestjs/platform-express';
   import { diskStorage } from 'multer';
   import { extname } from 'path';
   import { v4 as uuidv4 } from 'uuid';
   import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
-  import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-  import { UpdateProfileDto } from './dto/profile.dto';
+  import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+  import { PhoneUpdateDto, UpdateProfileDto } from './dto/profile.dto';
   import { ProfileService } from './profile.service';
   
   @ApiTags('Profile')
@@ -40,7 +41,7 @@ import {
           role: { type: 'string', example: 'BUY', enum: ['BUY', 'SELL'] },
           profileImg: {
             type: 'string',
-            format: 'binary', // 👈 fayl yuklash uchun
+            format: 'binary', 
           },
         },
       },
@@ -54,10 +55,17 @@ import {
   
       let profileImgPath: string | undefined;
       if (file) {
-        profileImgPath = file.filename; // faqat filename yuboramiz
+        profileImgPath = file.filename; 
       }
   
       return this.profileService.updateProfile(userId, dto, profileImgPath);
+    }
+
+    @Post("phone/update")
+    @ApiOperation({ summary: "Telefon raqamni yangilash (OTP tekshiruv bilan)" })
+    async updatePhone(@Req() req: Request,@Body() body: PhoneUpdateDto,) {
+      let user = req["user"];
+      return this.profileService.updatePhone(user.id, body);
     }
   }
   

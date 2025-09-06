@@ -1,19 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/core/prisma/prisma.service';
-import { UpdateProfileDto } from './dto/profile.dto';
+import { PhoneUpdateDto, UpdateProfileDto } from './dto/profile.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { EverificationTypes } from 'src/common/types/verification';
+import { VerificationService } from '../verification/verification.service';
 
 @Injectable()
 export class ProfileService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private verificationService:VerificationService) {}
 
   async updateProfile(
     userId: string,
     dto: UpdateProfileDto,
-    fileName?: string, // faqat filename saqlaymiz
+    fileName?: string, 
   ) {
-    // 1. Foydalanuvchi mavjudligini tekshirish
     const user = await this.prisma.users.findUnique({
       where: { id: userId },
     });
@@ -22,7 +23,6 @@ export class ProfileService {
       throw new NotFoundException('Foydalanuvchi topilmadi');
     }
 
-    // 2. Agar yangi fayl kelgan bo‘lsa, eski faylni o‘chirish
     if (fileName && user.profileImg) {
       const oldFilePath = path.join(
         process.cwd(),
@@ -36,7 +36,6 @@ export class ProfileService {
       }
     }
 
-    // 3. Yangilash
     const updatedUser = await this.prisma.users.update({
       where: { id: userId },
       data: {
@@ -45,12 +44,28 @@ export class ProfileService {
       },
     });
 
-    // 4. To‘liq URL qaytarish (front uchun)
     return {
       ...updatedUser,
       profileImg: updatedUser.profileImg
         ? `${updatedUser.profileImg}`
         : null,
+    };
+  }
+
+
+  async updatePhone(userId: string, payload: PhoneUpdateDto) {
+      
+    await  this.verificationService.checkConfirmOtp({type:EverificationTypes.EDIT_PHONE,email:payload.email,otp:payload.otp})
+  
+    const updated = await this.prisma.users.update({
+      where: { id: userId },
+      data: { email: payload.email },
+    });
+  
+    return {
+      status: true,
+      message: "Telefon raqami yangilandi",
+      data: updated,
     };
   }
 }
