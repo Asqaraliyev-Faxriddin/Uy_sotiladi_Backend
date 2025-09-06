@@ -14,6 +14,7 @@ import {
   
   @ApiTags('Profile')
   @Controller('profile')
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   export class ProfileController {
     constructor(private profileService: ProfileService) {}
