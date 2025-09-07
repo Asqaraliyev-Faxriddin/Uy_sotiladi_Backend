@@ -16,7 +16,7 @@ import { AppMailerService } from './mailer.service';
       },
 
       defaults:{
-        from:"IT company<asqaraliyevfaxrididn2011@gmail.com>"
+        from:"Uy Sotiladi<asqaraliyevfaxrididn2011@gmail.com>"
       },
 
       template:{

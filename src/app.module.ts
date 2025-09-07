@@ -9,11 +9,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RatingModule } from './modules/rating/rating.module';
 import { PurchasedCourseModule } from './modules/purchased-course/purchased-course.module';
+import { FavoriteModule } from './modules/favorite/favorite.module';
+import { HouseModule } from './modules/house/house.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     PrismaModule, AuthModule,MailerModule,AuthModule,VerificationModule,
-    RedisModule,     ProfileModule,JwtModule,RatingModule,PurchasedCourseModule],
+    RedisModule,     ProfileModule,JwtModule,RatingModule,PurchasedCourseModule, FavoriteModule, HouseModule, CategoryModule, ContactModule],
 })
 export class AppModule {}

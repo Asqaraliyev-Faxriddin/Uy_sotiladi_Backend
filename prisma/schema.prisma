@@ -108,7 +108,7 @@ model Favorite {
 
 model Category {
   id    BigInt   @id @default(autoincrement())
-  name  String
+  name  String @unique
   img   String?
   icon  String?
 

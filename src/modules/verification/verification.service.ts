@@ -79,9 +79,9 @@ export class VerificationService {
         const otp = generateOtp()
         await this.redis.set(key,JSON.stringify(otp),SectoMills(30))
         await this.smsService.sendSms(
-            getMessages(type,otp), // subject
-            email,             // qabul qiluvchi
-            Number(otp),               // kod
+            getMessages(type,otp), 
+            email,            
+            Number(otp),             
           );
         return {message:"Confirmation code Sent"}
         
