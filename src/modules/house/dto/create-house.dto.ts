@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateHouseDto {
   @ApiProperty({ type: 'string', format: 'binary', description: 'Uy rasmi (file yuklash uchun)' })
@@ -23,10 +24,12 @@ export class CreateHouseDto {
 
   @ApiProperty({ example: 150000, description: 'Uy narxi' })
   @IsNumber()
+  @Type(()=> Number)
   price: number;
 
   @ApiPropertyOptional({ example: 10000, description: 'Chegirma summasi' })
   @IsOptional()
+  @Type(()=> Number)
   @IsNumber()
   discount?: number;
 
@@ -50,6 +53,7 @@ export class CreateHouseDto {
   @ApiPropertyOptional({ example: true, description: 'Aktivligi' })
   @IsOptional()
   @IsBoolean()
+  @Type(()=> Boolean)
   isActive?: boolean;
 
   @ApiPropertyOptional({ example: { cadastral: '12345' }, description: 'Hujjatlar (JSON)' })
@@ -59,4 +63,47 @@ export class CreateHouseDto {
   @ApiProperty({ example: 1, description: 'Kategoriya ID' })
   @IsNotEmpty()
   categoryId: number;
+}
+
+
+
+
+export class QueryHousesDto {
+  @ApiPropertyOptional({ description: 'Nechta elementdan keyin boshlash', example: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  offset?: number;
+
+  @ApiPropertyOptional({ description: 'Olish kerak bo‘lgan uylar soni', example: 10 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number;
+
+  @ApiPropertyOptional({ description: 'Uy nomi bo‘yicha qidirish', example: 'Olmazor' })
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @ApiPropertyOptional({ description: 'Minimal narx', example: 100000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  minPrice?: number;
+
+  @ApiPropertyOptional({ description: 'Maksimal narx', example: 500000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  maxPrice?: number;
+
+  @ApiPropertyOptional({ description: 'Mamlakat bo‘yicha filter', example: 'Uzbekistan' })
+  @IsOptional()
+  @IsString()
+  country?: string;
 }

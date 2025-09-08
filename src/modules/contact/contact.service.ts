@@ -4,16 +4,64 @@ import { CreateContactDto } from './dto/create.contact.dtp';
 import { UpdateContactDto } from './dto/create.contact.dtp'; 
 import { QueryContactDto } from './dto/create.contact.dtp'; 
 import { Prisma, UserType } from '@prisma/client';
+import { AppMailerService } from 'src/common/mailer/mailer.service';
+
+
+function convertBigIntToString(obj: any): any {
+  if (typeof obj === 'bigint') return obj.toString();
+  if (Array.isArray(obj)) return obj.map(convertBigIntToString);
+  if (obj && typeof obj === 'object') {
+    const res: any = {};
+    for (const key in obj) {
+      res[key] = convertBigIntToString(obj[key]);
+    }
+    return res;
+  }
+  return obj;
+}
+
+
+
+
 
 @Injectable()
 export class ContactService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private mailerService:AppMailerService) {}
 
-  async create(dto: CreateContactDto) {
-    return this.prisma.contact.create({
-      data: dto,
+  async create(dto: CreateContactDto,userId:string) {
+    let data = await this.prisma.contact.create({
+      data: {
+        ...dto,
+        userId
+      },
     });
+  
+    const house = await this.prisma.housess.findUnique({
+      where: { id: dto.houseId },
+      include: { user: true }, 
+    });
+  
+    if (!house) {
+      throw new NotFoundException('House not found');
+    }
+  
+    const owner = house.user;
+  
+    await this.mailerService.sendContact({
+      firstname: dto.name.split(' ')[0], 
+      lastname: dto.name.split(' ')[1] || '', 
+      email: dto.email!, 
+      mur_email: owner.email, 
+      mur_phone:data.phone,
+      message: dto.message!,
+      date: dto.date.toString(),
+      houseName: house.title, 
+    });
+  
+    return { data: convertBigIntToString(data) };
   }
+  
+  
 
   async findAll(query: QueryContactDto) {
     const { email, offset = 0, limit = 10 } = query;
@@ -36,7 +84,7 @@ export class ContactService {
       total,
       offset: Number(offset),
       limit: Number(limit),
-      data,
+      data:convertBigIntToString(data),
     };
   }
 
@@ -59,7 +107,7 @@ export class ContactService {
 
     return this.prisma.contact.update({
       where: { id },
-      data: dto,
+      data: convertBigIntToString(dto),
     });
   }
 
@@ -74,6 +122,11 @@ export class ContactService {
       throw new ForbiddenException('Siz bu contactni o‘chirish huquqiga ega emassiz');
     }
 
-    return this.prisma.contact.delete({ where: { id } });
+    let data = await this.prisma.contact.delete({ where: { id } });
+    
+    return {
+      data:convertBigIntToString(data)
+    }
+  
   }
 }

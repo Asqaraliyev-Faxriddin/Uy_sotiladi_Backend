@@ -48,7 +48,7 @@ model Housess {
   build_year    DateTime?
   description   String?
   features      Json?
-  extraFeatures Json?
+  house.features Json?
   isActive      Boolean        @default(true)
   documents     Json?
 

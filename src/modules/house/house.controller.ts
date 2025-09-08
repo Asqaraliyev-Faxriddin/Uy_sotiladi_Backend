@@ -15,9 +15,9 @@ import {
 import * as FormData from 'form-data';
 import axios from 'axios';
 import { HouseService } from './house.service';
-import { CreateHouseDto } from './dto/create-house.dto';
+import { CreateHouseDto, QueryHousesDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/Roles.decorator';
@@ -26,11 +26,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Houses')
 @ApiBearerAuth()
-@UseGuards(AuthGuard,RolesGuard)
 @Controller('houses')
 export class HouseController {
   constructor(private readonly houseService: HouseService) {}
 
+@UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN, UserType.SELL)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
@@ -78,20 +78,28 @@ export class HouseController {
 
     return this.houseService.create(dto, req.user.id, uploadedUrl);
   }
-  
+
   @Get()
-  @ApiOperation({ summary: 'Aktiv uylardan ro‘yxat (oddiy foydalanuvchi)' })
-  findAll() {
-    return this.houseService.findAll();
+  @ApiOperation({ summary: "Aktiv uylardan ro‘yxat (oddiy foydalanuvchi)" })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Olish kerak bo‘lgan uylar soni' })
+  @ApiQuery({ name: 'offset', required: false, type: Number, description: 'Qancha elementdan keyin boshlash' })
+  @ApiQuery({ name: 'title', required: false, type: String, description: 'Uy nomi bo‘yicha qidirish' })
+  findAll(@Query() query: QueryHousesDto) {
+    return this.houseService.findAll(query);
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN)
-  @Get('all/full')
-  @ApiOperation({ summary: 'Barcha uylardan ro‘yxat (Admin)' })
-  findAllFull() {
-    return this.houseService.findAllFull();
+  @Get()
+  @ApiOperation({ summary: "Aktiv uylardan ro‘yxat (oddiy foydalanuvchi)" })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Olish kerak bo‘lgan uylar soni' })
+  @ApiQuery({ name: 'offset', required: false, type: Number, description: 'Qancha elementdan keyin boshlash' })
+  @ApiQuery({ name: 'title', required: false, type: String, description: 'Uy nomi bo‘yicha qidirish' })
+  findFullAll(@Query() query: QueryHousesDto) {
+    return this.houseService.findAllFull(query);
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Get('my')
   @ApiOperation({ summary: 'Userning o‘z uylari' })
   findByUser(@Req() req) {
@@ -100,6 +108,9 @@ export class HouseController {
 
   @Get('search')
   @ApiOperation({ summary: 'Uylardan qidirish (email, title, category bo‘yicha)' })
+  @ApiQuery({ name: 'email', required: false, type: String, description: 'User email bo‘yicha qidirish' })
+  @ApiQuery({ name: 'title', required: false, type: String, description: 'Uy title bo‘yicha qidirish' })
+  @ApiQuery({ name: 'category', required: false, type: String, description: 'Category name bo‘yicha qidirish' })
   query(
     @Query('email') email?: string,
     @Query('title') title?: string,
@@ -108,12 +119,14 @@ export class HouseController {
     return this.houseService.query({ email, title, category });
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Bitta uy ma’lumotini olish' })
   findOne(@Param('id') id: string) {
     return this.houseService.findOne(id);
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN,UserType.SELL)
   @Patch(':id')
   @ApiOperation({ summary: 'Uy ma’lumotini yangilash' })
@@ -121,6 +134,7 @@ export class HouseController {
     return this.houseService.update(id, updateHouseDto, req.user.id);
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN,UserType.SELL)
   @Delete(':id')
   @ApiOperation({ summary: 'Uy o‘chirish' })

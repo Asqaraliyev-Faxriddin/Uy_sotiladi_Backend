@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
-export class CreateContactDto {
+export class  CreateContactDto {
   @ApiProperty({ example: '2025-09-07T15:30:00Z', description: 'Date of contact' })
   @IsDateString()
   date: Date;
@@ -32,10 +32,6 @@ export class CreateContactDto {
   @IsString()
   email?: string;
 
-  @ApiProperty({ example: 'uuid-of-user', description: 'User ID' })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
 
   @ApiProperty({ example: 'uuid-of-house', description: 'House ID' })
   @IsString()

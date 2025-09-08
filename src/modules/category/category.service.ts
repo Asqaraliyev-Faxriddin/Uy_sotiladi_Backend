@@ -5,6 +5,21 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { QueryCategoryDto } from './dto/create-category.dto'; 
 import { Prisma } from '@prisma/client';
 
+
+function convertBigIntToString(obj: any): any {
+  if (typeof obj === 'bigint') return obj.toString();
+  if (Array.isArray(obj)) return obj.map(convertBigIntToString);
+  if (obj && typeof obj === 'object') {
+    const res: any = {};
+    for (const key in obj) {
+      res[key] = convertBigIntToString(obj[key]);
+    }
+    return res;
+  }
+  return obj;
+}
+
+
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
@@ -24,7 +39,13 @@ export class CategoryService {
       ...(iconUrl && { icon: iconUrl }),
     };
 
-    return this.prisma.category.create({ data: dataToCreate });
+
+      let category = await this.prisma.category.create({ data: dataToCreate });
+
+      return {
+        ...category,
+        id: category.id.toString(), 
+      };
   }
 
   async findAll(query: QueryCategoryDto) {
@@ -48,7 +69,7 @@ export class CategoryService {
       total,
       offset: Number(offset),
       limit: Number(limit),
-      data,
+      data:convertBigIntToString(data),
     };
   }
 
@@ -74,7 +95,7 @@ export class CategoryService {
 
     return this.prisma.category.update({
       where: { id },
-      data: dto,
+      data: convertBigIntToString(dto),
     });
   }
 
@@ -82,6 +103,13 @@ export class CategoryService {
     const exist = await this.prisma.category.findUnique({ where: { id } });
     if (!exist) throw new NotFoundException(`Category with id ${id} not found`);
 
-    return this.prisma.category.delete({ where: { id } });
+    let data = await this.prisma.category.delete({ where: { id } });
+    
+
+    return {
+      data:convertBigIntToString(data)
+    }
+  
+  
   }
 }

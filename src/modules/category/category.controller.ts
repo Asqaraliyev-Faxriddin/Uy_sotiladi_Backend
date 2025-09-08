@@ -28,10 +28,10 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 @ApiTags('Categories')
 @Controller('categories')
 @ApiBearerAuth()
-@UseGuards(AuthGuard,RolesGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -82,6 +82,9 @@ export class CategoryController {
       iconUrl = response.data.data.url;
     }
 
+    console.log(imgUrl,iconUrl);
+    
+
     return this.categoryService.create(dto, imgUrl, iconUrl);
   }
   @Get()
@@ -94,6 +97,7 @@ export class CategoryController {
     return this.categoryService.findAll(query);
   }
 
+  @UseGuards(AuthGuard,RolesGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Get single category by ID' })
   @ApiResponse({ status: 200, description: 'Category found' })
@@ -102,6 +106,7 @@ export class CategoryController {
     return this.categoryService.findOne(BigInt(id));
   }
 
+@UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN)
   @Patch(':id')
   @ApiOperation({ summary: 'Update category by ID' })
@@ -112,6 +117,7 @@ export class CategoryController {
     return this.categoryService.update(BigInt(id), updateCategoryDto);
   }
 
+@UseGuards(AuthGuard,RolesGuard)
   @Roles(UserType.ADMIN)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete category by ID' })

@@ -22,3 +22,4 @@ import { SeaderModule } from './core/prisma/seader/seader.module';
     RedisModule,  SeaderModule,   ProfileModule,JwtModule,RatingModule,PurchasedCourseModule, FavoriteModule, HouseModule, CategoryModule, ContactModule],
 })
 export class AppModule {}
+  

@@ -20,21 +20,24 @@ import {
     ApiOperation,
     ApiBearerAuth,
     ApiResponse,
+    ApiBody,
   } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
   
   @ApiTags('Contacts')
   @ApiBearerAuth() 
   @Controller('contacts')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard,RolesGuard)
   export class ContactController {
     constructor(private readonly contactService: ContactService) {}
   
-    @Post()
+    @Post("create")
     @ApiOperation({ summary: 'Create new contact' })
+    @ApiBody({type:CreateContactDto})
     @ApiResponse({ status: 201, description: 'Contact successfully created' })
-    create(@Body() dto: CreateContactDto) {
-      return this.contactService.create(dto);
+    create(@Body() dto: CreateContactDto,@Req() req) {
+      return this.contactService.create(dto,req.user.id);
     }
   
     @Get()
