@@ -33,7 +33,7 @@ export class VerificationService {
         const user = await this.prismaService.users.findUnique({where:{email}})
 
         if(user){
-            throw new HttpException("Phone already used",HttpStatus.BAD_REQUEST)
+            throw new HttpException("Email already used",HttpStatus.BAD_REQUEST)
         }
 
         return user
@@ -43,7 +43,7 @@ export class VerificationService {
         const user = await this.prismaService.users.findUnique({where:{email}})
 
         if(!user){
-            throw new HttpException("user not found",HttpStatus.NOT_FOUND)
+            throw new HttpException("User not found",HttpStatus.NOT_FOUND)
         }
 
         return user

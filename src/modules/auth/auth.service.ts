@@ -139,7 +139,7 @@ export class AuthService {
 async PhoneAndPasswordCheck(password: string, email: string) {
   let oldphone = await this.prisma.users.findUnique({ where: { email } });
 
-  if (!oldphone) throw new NotFoundException("Phone not found");
+  if (!oldphone) throw new NotFoundException("Email not found");
 
   let checkpassword: boolean;
     if (oldphone.password.startsWith('$2b$')) {

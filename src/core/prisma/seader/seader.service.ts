@@ -25,7 +25,7 @@ export class SeaderService implements OnModuleInit {
               lastName:"Asqaraliyev",
               email: 'asqaraliyevfaxriddin2011@gmail.com',
               role: UserType.ADMIN,
-              password:"11201111"
+              password
             },
 
 
@@ -34,7 +34,7 @@ export class SeaderService implements OnModuleInit {
               lastName:"Kim",
               email: 'asqaraliyevfaxriddin2009@gmail.com',
               role: UserType.SELL,
-              password:"11201123"
+              password
             },
             
 
@@ -43,7 +43,7 @@ export class SeaderService implements OnModuleInit {
               lastName:"Sen",
               email: 'asqaraliyevfaxriddin44@gmail.com',
               role: UserType.BUY,
-              password:"11201123"
+              password
             },
             
       
@@ -52,6 +52,6 @@ export class SeaderService implements OnModuleInit {
           skipDuplicates: true,
         });
        
-        this.loger.log("Admin va User yaratildi.")
+        this.loger.log("Admin ,Sotuvchi va Xaridor yaratildi.")
       }
 }

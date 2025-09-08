@@ -7,7 +7,7 @@ import { UpdateHouseDto } from './dto/update-house.dto';
 export class HouseService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createHouseDto: CreateHouseDto, userId: string) {
+  async create(createHouseDto: CreateHouseDto, userId: string, fileName?: string) {
     const payment = await this.prisma.housePayment.findFirst({
       where: {
         userId,
@@ -19,13 +19,17 @@ export class HouseService {
       throw new ForbiddenException('Uy qo‘shish uchun to‘lov qilishingiz kerak');
     }
 
+    const dataToCreate = {
+      ...createHouseDto,
+      userId,
+      ...(fileName && { img: fileName }), 
+    };
+
     return this.prisma.housess.create({
-      data: {
-        ...createHouseDto,
-        userId,
-      },
+      data: dataToCreate,
     });
   }
+
 
   async findAll() {
     const houses = await this.prisma.housess.findMany({

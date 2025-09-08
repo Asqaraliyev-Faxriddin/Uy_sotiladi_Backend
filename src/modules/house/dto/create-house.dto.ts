@@ -2,10 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateHouseDto {
-  @ApiPropertyOptional({ example: 'https://picsum.photos/600/400', description: 'Uy rasmi (URL)' })
+  @ApiProperty({ type: 'string', format: 'binary', description: 'Uy rasmi (file yuklash uchun)' })
   @IsOptional()
-  @IsString()
-  img?: string;
+  img?: any; 
 
   @ApiProperty({ example: 'Modern Apartment', description: 'Uy nomi' })
   @IsString()
@@ -56,11 +55,6 @@ export class CreateHouseDto {
   @ApiPropertyOptional({ example: { cadastral: '12345' }, description: 'Hujjatlar (JSON)' })
   @IsOptional()
   documents?: Record<string, any>;
-
-  @ApiProperty({ example: 'user-uuid-123', description: 'User ID (kim joylagan)' })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
 
   @ApiProperty({ example: 1, description: 'Kategoriya ID' })
   @IsNotEmpty()

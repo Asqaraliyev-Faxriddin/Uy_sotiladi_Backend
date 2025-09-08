@@ -16,7 +16,7 @@ export class ProfileService {
   async myProfile(id:string){
     console.log("salom");
     
-    let data = await this.prisma.users.findFirst({where:{id}})
+    let data = await this.prisma.users.findFirst({where:{id},select:{id:true,firstName:true,lastName:true,email:true,role:true,profileImg:true}})
 
     if(!data) throw new NotFoundException("User not found")
 
@@ -24,6 +24,29 @@ export class ProfileService {
       return {
         succase:true,
         message:"Succase my profile",
+        data
+      }
+
+    }
+
+
+
+    
+  async deleteProfile(id:string){
+    
+    let data = await this.prisma.users.findFirst({where:{id}})
+
+    if(!data) throw new NotFoundException("User not found")
+
+      await this.prisma.users.delete({
+        where:{
+          id:data.id
+        }
+      })
+      
+      return {
+        succase:true,
+        message:"Succase delete User",
         data
       }
 

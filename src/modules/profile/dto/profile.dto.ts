@@ -18,7 +18,6 @@ export class UpdateProfileDto {
   @IsString()
   lastName?: string;
 
-
   @ApiPropertyOptional({
     description: 'Foydalanuvchining roli',
     example: 'BUY',
@@ -27,10 +26,8 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   role?: string;
-
-
-
 }
+
 
 
 export class PhoneUpdateDto {

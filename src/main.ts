@@ -17,7 +17,9 @@ async function bootstrap() {
   .setTitle("Learning-Management-System")
   .setVersion("1")
   .addBearerAuth()
+  .addBearerAuth()
   .build()
+  
 
 
 

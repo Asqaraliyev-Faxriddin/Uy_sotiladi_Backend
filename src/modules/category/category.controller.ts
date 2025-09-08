@@ -14,7 +14,7 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { QueryCategoryDto } from './dto/create-category.dto'; 
-import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { Roles } from 'src/common/decorators/Roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -22,11 +22,12 @@ import { UserType } from '@prisma/client';
 
 @ApiTags('Categories')
 @Controller('categories')
+@ApiBearerAuth()
 @UseGuards(AuthGuard,RolesGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-@Roles(UserType.ADMIN)
+  @Roles(UserType.ADMIN)
   @Post()
   @ApiOperation({ summary: 'Create new category' })
   @ApiResponse({ status: 201, description: 'Category created successfully' })
