@@ -9,7 +9,7 @@ import { Prisma } from '@prisma/client';
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateCategoryDto) {
+  async create(dto: CreateCategoryDto, imgUrl?: string, iconUrl?: string) {
     const exist = await this.prisma.category.findUnique({
       where: { name: dto.name },
     });
@@ -18,7 +18,13 @@ export class CategoryService {
       throw new ConflictException(`Category with name "${dto.name}" already exists`);
     }
 
-    return this.prisma.category.create({ data: dto });
+    const dataToCreate = {
+      ...dto,
+      ...(imgUrl && { img: imgUrl }),
+      ...(iconUrl && { icon: iconUrl }),
+    };
+
+    return this.prisma.category.create({ data: dataToCreate });
   }
 
   async findAll(query: QueryCategoryDto) {
