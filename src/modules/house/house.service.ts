@@ -27,7 +27,6 @@ export class HouseService {
     });
   }
 
-  // Oddiy foydalanuvchilar uchun
   async findAll() {
     const houses = await this.prisma.housess.findMany({
       where: { isActive: true },
@@ -45,7 +44,6 @@ export class HouseService {
     };
   }
 
-  // Adminlar uchun
   async findAllFull() {
     const houses = await this.prisma.housess.findMany({
       include: {
@@ -62,7 +60,6 @@ export class HouseService {
     };
   }
 
-  // Userning o‘z uylari (req.user.id bo‘yicha)
   async findByUser(userId: string) {
     const houses = await this.prisma.housess.findMany({
       where: { userId },
