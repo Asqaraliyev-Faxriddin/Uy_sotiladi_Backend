@@ -80,7 +80,7 @@ import {
 
 
   
-  @Get("profile")
+  @Get("my/profile")
   @ApiOperation({ summary: "Foydalanuvchi profilini olish (self)" })
   async getProfile(@Req() req: Request) {
     let user = req["user"];

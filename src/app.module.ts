@@ -13,11 +13,12 @@ import { FavoriteModule } from './modules/favorite/favorite.module';
 import { HouseModule } from './modules/house/house.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ContactModule } from './modules/contact/contact.module';
+import { SeaderModule } from './core/prisma/seader/seader.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     PrismaModule, AuthModule,MailerModule,AuthModule,VerificationModule,
-    RedisModule,     ProfileModule,JwtModule,RatingModule,PurchasedCourseModule, FavoriteModule, HouseModule, CategoryModule, ContactModule],
+    RedisModule,  SeaderModule,   ProfileModule,JwtModule,RatingModule,PurchasedCourseModule, FavoriteModule, HouseModule, CategoryModule, ContactModule],
 })
 export class AppModule {}
